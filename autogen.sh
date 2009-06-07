@@ -1,6 +1,22 @@
-#!/bin/sh -e
+#!/bin/sh
 # Run this to generate all the initial makefiles, etc.
 
-autoreconf -i -f
-intltoolize -f
-./configure "$@"
+srcdir=`dirname $0`
+test -z "$srcdir" && srcdir=.
+
+PKG_NAME="giggle"
+
+(test -f $srcdir/src/giggle-main.c) || {
+	echo -n "**Error**: Directory "\`$srcdir\'" does not look like the"
+	echo " top-level $PKG_NAME directory"
+	exit 1
+}
+
+which gnome-autogen.sh || {
+	echo "You need to install gnome-common from the GNOME Git repository"
+	exit 1
+}
+
+REQUIRED_AUTOCONF_VERSION=2.61
+REQUIRED_INTLTOOL_VERSION=0.35.0
+USE_GNOME2_MACROS=1 . gnome-autogen.sh
